@@ -1,1 +1,1 @@
-# SpringCloud练习
+# SpringCloud示例项目
