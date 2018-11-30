@@ -1,11 +1,20 @@
 server:
   port: 8081
 spring:
+  application:
+    name: user-product-demo
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/example?useSSL=false
     username: root
     password: 123456
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 30       # 每隔30秒向Eureka发送一次心跳请求
+    lease-expiration-duration-in-seconds: 90    # 如果90秒没有发送心跳,则代表服务宕机
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka, http://127.0.0.1:10087/eureka
 logging:
   level:
     com.user.product: debug
