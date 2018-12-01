@@ -15,4 +15,5 @@ public class User {
     private String note;
     private Date created;
     private Date updated;
+    private String message;
 }

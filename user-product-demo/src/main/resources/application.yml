@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8082
 spring:
   application:
     name: user-product-demo
@@ -14,7 +14,7 @@ eureka:
     lease-expiration-duration-in-seconds: 90    # 如果90秒没有发送心跳,则代表服务宕机
   client:
     service-url:
-      defaultZone: http://127.0.0.1:10086/eureka, http://127.0.0.1:10087/eureka
+      defaultZone: http://127.0.0.1:10086/eureka
 logging:
   level:
     com.user.product: debug

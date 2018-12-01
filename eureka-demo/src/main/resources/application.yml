@@ -6,7 +6,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://127.0.0.1:10087/eureka
+      defaultZone: http://127.0.0.1:10086/eureka
     register-with-eureka: false           # 代表Eureka不会注册自己
     fetch-registry: false                 # 代表是否从Eureka上获取注册信息
   server:

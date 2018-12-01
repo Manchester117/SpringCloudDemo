@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8081
 spring:
   application:
     name: user-consumer-demo
@@ -10,7 +10,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://127.0.0.1:10086/eureka, http://127.0.0.1:10087/eureka
+      defaultZone: http://127.0.0.1:10086/eureka
     registry-fetch-interval-seconds: 30         # 默认30秒拉取一次服务列表
 logging:
   level:
@@ -25,3 +25,10 @@ user-consumer-demo:
     OkToRetryOnAllOperations: true                                          # 是否对所有操作都进行重试
     MaxAutoRetriesNextServer: 1                                             # 切换实例的重试次数
     MaxAutoRetries: 1                                                       # 对当前实例的重试次数
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000     # 配置全局的服务降级限时为2秒

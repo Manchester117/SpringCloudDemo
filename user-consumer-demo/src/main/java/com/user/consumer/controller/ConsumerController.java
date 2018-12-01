@@ -1,5 +1,9 @@
 package com.user.consumer.controller;
 
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import com.sun.javafx.binding.StringFormatter;
 import com.user.consumer.pojo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +21,17 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/user")
+@DefaultProperties(defaultFallback = "defaultFallback")
 public class ConsumerController {
     @Autowired
     private RestTemplate restTemplate;
-    @Autowired
-    private DiscoveryClient discoveryClient;
+//    @Autowired
+//    private DiscoveryClient discoveryClient;
+    // 在复杂方式中使用LoadBalancerClient
     // 这里要注意的是:不使用RibbonLoadBalancerClient
     // 否则会报'org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerClient' that could not be found
-    @Autowired
-    private LoadBalancerClient balancerClient;
+//    @Autowired
+//    private LoadBalancerClient balancerClient;
 
 
 //    /**
@@ -58,19 +64,6 @@ public class ConsumerController {
 //        return user;
 //    }
 
-    /**
-     * 使用Ribbon实现负载均衡(简单方式)
-     * @param id - 用户ID
-     * @return User对象
-     */
-    @GetMapping("{id}")
-    public User getUserById(@PathVariable("id") Long id) {
-        // 隐藏具体的服务地址和端口号
-        String url = "http://user-product-demo/user/" + id;
-        User user = restTemplate.getForObject(url, User.class);
-        return user;
-    }
-
 //    /**
 //     * 使用Ribbon实现负载均衡(复杂方式)
 //     * @param id - 用户ID
@@ -85,4 +78,106 @@ public class ConsumerController {
 //        User user = restTemplate.getForObject(url, User.class);
 //        return user;
 //    }
+
+//    /**
+//     * 使用Ribbon实现负载均衡(简单方式)
+//     * @param id - 用户ID
+//     * @return User对象
+//     */
+//    @GetMapping("{id}")
+//    public User getUserById(@PathVariable("id") Long id) {
+//        // 隐藏具体的服务地址和端口号
+//        String url = "http://user-product-demo/user/" + id;
+//        User user = restTemplate.getForObject(url, User.class);
+//        return user;
+//    }
+
+//    /**
+//     * 增加Hystrix服务降级(单独方法)
+//     * @param id - 用户ID
+//     * @return User对象
+//     */
+//    @GetMapping("{id}")
+//    @HystrixCommand(fallbackMethod = "getUserByIdFallBack")
+//    public User getUserById(@PathVariable("id") Long id) {
+//        // 隐藏具体的服务地址和端口号
+//        String url = "http://user-product-demo/user/" + id;
+//        User user = restTemplate.getForObject(url, User.class);
+//        return user;
+//    }
+//
+//    public User getUserByIdFallBack(Long id) {
+//        User user = new User();
+//        user.setMessage(String.format("查询用户失败,查询用户ID: %d", id));
+//        return user;
+//    }
+
+//    /**
+//     * 增加Hystrix服务降级(类级配置-单独方法)
+//     * @param id - 用户ID
+//     * @return User对象
+//     */
+//    @GetMapping("{id}")
+//    @HystrixCommand(commandProperties = {
+//            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000")
+//    })
+//    public User getUserById(@PathVariable("id") Long id) {
+//        // 隐藏具体的服务地址和端口号
+//        String url = "http://user-product-demo/user/" + id;
+//        User user = restTemplate.getForObject(url, User.class);
+//        return user;
+//    }
+//
+//    public User defaultFallback() {
+//        User user = new User();
+//        user.setMessage("类级作用域的降级方法");
+//        return user;
+//    }
+
+//    /**
+//     * 增加Hystrix服务降级(全局配置)
+//     * @param id - 用户ID
+//     * @return User对象
+//     */
+//    @GetMapping("{id}")
+//    @HystrixCommand         // 如果是全局配置,这里不需要写任何参数
+//    public User getUserById(@PathVariable("id") Long id) {
+//        // 隐藏具体的服务地址和端口号
+//        String url = "http://user-product-demo/user/" + id;
+//        User user = restTemplate.getForObject(url, User.class);
+//        return user;
+//    }
+//
+//    public User defaultFallback() {
+//        User user = new User();
+//        user.setMessage("全局配置作用域的服务降级");
+//        return user;
+//    }
+
+    /**
+     * 增加Hystrix服务熔断
+     * @param id - 用户ID
+     * @return User对象
+     */
+    @GetMapping("{id}")
+    @HystrixCommand(commandProperties = {
+            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "10"),
+            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000"),
+            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "60")
+    })
+    public User getUserById(@PathVariable("id") Long id) {
+        if (id % 2 == 0) {
+            throw new RuntimeException("超时和抛出异常过多可以引起熔断");
+        }
+        // 隐藏具体的服务地址和端口号
+        String url = "http://user-product-demo/user/" + id;
+        User user = restTemplate.getForObject(url, User.class);
+        return user;
+    }
+
+    public User defaultFallback() {
+        User user = new User();
+        user.setMessage("全局配置作用域的服务降级");
+        return user;
+    }
 }

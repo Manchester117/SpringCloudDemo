@@ -5,6 +5,7 @@ import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
@@ -22,4 +23,6 @@ public class User {
     private String note;
     private Date created;
     private Date updated;
+    @Transient                          // 被@Transient注解过的属性不会入库
+    private String message;
 }
