@@ -185,7 +185,7 @@ public class ConsumerController {
 //    }
 
     @GetMapping("{id}")
-    public User getUseerId(@PathVariable("id") Long id) {
+    public User getUserId(@PathVariable("id") Long id) {
         return feignClient.getUserById(id);
     }
 }
