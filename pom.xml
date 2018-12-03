@@ -12,6 +12,7 @@
         <module>user-product-demo</module>
         <module>user-consumer-demo</module>
         <module>eureka-demo</module>
+        <module>zuul-gateway-demo</module>
     </modules>
 
     <!--这个节点是指代的SpringBoot的父级依赖,引入了Maven中Spring的默认配置(比如版本号)-->

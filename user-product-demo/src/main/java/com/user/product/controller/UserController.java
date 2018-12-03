@@ -14,11 +14,6 @@ public class UserController {
     @GetMapping("{id}")
     @ResponseBody
     public User getUserById(@PathVariable("id") Long id) {
-//        try {
-//            Thread.sleep(2000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         return userService.getUserById(id);
     }
 }

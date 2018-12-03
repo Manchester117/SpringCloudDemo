@@ -186,6 +186,7 @@ public class ConsumerController {
 
     @GetMapping("{id}")
     public User getUserId(@PathVariable("id") Long id) {
+        System.out.println();
         return feignClient.getUserById(id);
     }
 }

@@ -2,7 +2,7 @@ server:
   port: 8081
 spring:
   application:
-    name: user-consumer-demo
+    name: user-consumer-demo                                                  # 服务ID
   cloud:
     loadbalancer:
       retry:
