@@ -7,21 +7,30 @@ eureka:
   client:
     service-url:
       defaultZone: http://127.0.0.1:10086/eureka
-#zuul:                                            # 实际上也可以什么都不用写,因为zuul给每一个微服务都创建了默认映射路径
-#  routes:                                        # key是服务名称,value是以服务名称作为映射路径
-#    user-consumer-demo: /user-consumer-demo/**   # 实际上,这里可以直接将服务ID做Key,服务的映射路径路径作为Value.进一步简化配置
+#zuul:                                           # 实际上也可以什么都不用写,因为zuul给每一个微服务都创建了默认映射路径
+#  routes:                                       # key是服务名称,value是以服务名称作为映射路径
+#    user-consumer-demo: /user-consumer-demo/**  # 实际上,这里可以直接将服务ID做Key,服务的映射路径路径作为Value.进一步简化配置
 #    heihei:                                     # 路由ID-可以随便写
 #      path: /user-consumer-demo/**              # 这里可以简单理解为:将微服务名称替换成url实现请求转发
 #      serviceId: user-consumer-demo             # 这里直接使用serviceId来代替url(面向服务的路由)
-##      url: http://127.0.0.1:8081
+#      url: http://127.0.0.1:8081                # 服务对应的URL地址
 zuul:
   routes:
-#    user-consumer-demo: /user/**                  # 这里需要注意的是自定义的访问路径和zuul默认给的路径都会生效(http://xxx:xx/user/user/x)
+#    strip-prefix: false                          # 全局去除前缀(一般不用)
+#    user-consumer-demo: /user/**                 # 这里需要注意的是自定义的访问路径和zuul默认给的路径都会生效(http://xxx:xx/user/user/x)
     user-consumer-demo:                           # 另外一种配置,简化访问路径(取出前缀)
       path: /user/**
       serviceId: user-consumer-demo
       strip-prefix: false                         # true代表不去除url前缀,false代表取出url前缀(注意,这个是局部去除前缀)
-#  strip-prefix: false                             # 全局去除前缀(一般不用)
   ignored-services:                               # 忽略服务不会暴露在外面
     - user-product-demo
-
+hystrix:                                         # zuul的降级熔断配置
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 6000
+ribbon:                                          # zuul的负载均衡配置
+  ConnectionTimeout: 500
+  ReadTimeout: 2000
