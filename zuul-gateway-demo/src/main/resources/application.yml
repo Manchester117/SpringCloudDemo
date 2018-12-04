@@ -24,13 +24,15 @@ zuul:
       strip-prefix: false                         # true代表不去除url前缀,false代表取出url前缀(注意,这个是局部去除前缀)
   ignored-services:                               # 忽略服务不会暴露在外面
     - user-product-demo
-hystrix:                                         # zuul的降级熔断配置
+hystrix:                                          # zuul的降级熔断配置
   command:
     default:
       execution:
         isolation:
           thread:
             timeoutInMilliseconds: 6000
-ribbon:                                          # zuul的负载均衡配置
-  ConnectionTimeout: 500
-  ReadTimeout: 2000
+ribbon:                                           # zuul的负载均衡配置
+  ConnectionTimeout: 500                          # ribbon连接超时时长
+  ReadTimeout: 2000                               # ribbon读取超时时长
+  MaxAutoRetries: 0                               # 当前服务重试次数
+  MaxAutoRetriesNextServer: 0                     # 切换服务重试次数
